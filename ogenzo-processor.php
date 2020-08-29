@@ -51,8 +51,6 @@ function ogenzo_init()
             'UGX',
         );
 
-
-
         public function __construct()
         {
 
@@ -71,7 +69,6 @@ function ogenzo_init()
 
 
             $this->instructions     = $this->get_option('instructions', $this->description);
-
             $this->mtn_slug              = $this->get_option('mtn_slug');
 
             $this->airtel_slug              = $this->get_option('airtel_slug');
@@ -86,13 +83,13 @@ function ogenzo_init()
                 add_action('woocommerce_update_options_payment_gateways', array($this, 'process_admin_options'));
             }
 
-            add_action('admin_notices', array($this, 'beyonic_admin_notices'));
         }
 
 
 
         public function init_form_fields()
         {
+            $readonly = array('readonly' => 'readonly');
             $this->form_fields = array(
 
                 'enabled' => array(
@@ -155,6 +152,14 @@ function ogenzo_init()
                     'label'   => __('Airtel wallet slug', 'woocommerce'),
                     'default' => '',
                     'desc_tip'    => true,
+                ),
+                'cron_url' => array(
+                    'title'   => __('Cron Url', 'woocommerce'),
+                    'type'    => 'text',
+                    'label'   => __('This is the url to use for the cron job. Set it for every minute', 'woocommerce'),
+                    'default' => get_site_url() . '?ogenzo_cron=1',
+                    'desc_tip'    => true,
+                    'custom_attributes' => $readonly,
                 ),
             );
         }
@@ -235,7 +240,7 @@ function ogenzo_init()
 
     add_filter('woocommerce_payment_gateways', 'add_ogenzo_pay_gw');
 
-    if (!empty($_GET['ogenzo_ipn']) && $_GET['ogenzo_ipn'] == 1) {
+    if (!empty($_GET['ogenzo_cron']) && $_GET['ogenzo_cron'] == 1) {
 
         global  $wpdb;
         $data['user_name'] = 'user_name';
